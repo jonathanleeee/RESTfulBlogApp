@@ -46,6 +46,7 @@ app.get("/blogs/new", function(req, res){
 });
 
 //CREATE route
+
 app.post("/blogs", function(req, res){
     //create blog
     Blog.create(req.body.blog, function(err, newBlog){
@@ -55,6 +56,18 @@ app.post("/blogs", function(req, res){
             res.redirect("/blogs");
         }
     });
+});
+
+//SHOW route
+
+app.get("/blogs/:id", function(req, res){
+   Blog.findById(req.params.id, function(err, foundBlog){
+      if(err){
+          res.redirect("/blogs");
+      } else {
+          res.render("show", {blog: foundBlog});
+      }
+   });
 });
 
 
