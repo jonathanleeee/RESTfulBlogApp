@@ -1,4 +1,5 @@
 var bodyParser = require("body-parser"),
+methodOverride = require("method-override"),
 mongoose       = require("mongoose"),
 express        = require("express"),
 app            = express();
@@ -9,6 +10,7 @@ mongoose.connect("mongodb://localhost/restful_blog_app", {useMongoClient: true})
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride("_method"));
 
 // Mongoose model config
 
@@ -70,6 +72,32 @@ app.get("/blogs/:id", function(req, res){
    });
 });
 
+
+//EDIT route
+
+app.get("/blogs/:id/edit", function(req, res){
+   Blog.findById(req.params.id, function(err, foundBlog){
+      if(err){
+          res.redirect("/blogs");
+      } else {
+          res.render("edit", {blog: foundBlog});
+      }
+   });
+});
+
+//UPDATE route
+
+app.put("/blogs/:id", function(req, res){
+  Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, updateBlog){
+      if(err){
+          res.redirect("/blogs");
+      } else {
+          res.redirect("/blogs/" + req.params.id);
+      }
+  });
+});
+
+//Listening route
 
 app.listen(process.env.PORT, process.env.IP, function(){
    console.log("Server is running"); 
